@@ -21,7 +21,7 @@ export const RecipeListPage = () => {
               className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
             >
               <Text>{label}</Text>
-              <Image src={image} h={"100px"} w={"100px"} />
+              <Image src={image} h={"200px"} w={"200px"} />
             </div>
           );
         })}
