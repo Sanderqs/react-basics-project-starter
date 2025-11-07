@@ -5,8 +5,6 @@ import { LabelTag } from "./labelTag";
 
 export const LabelContent = ({ title, items, color }) => {
   if (!hasItems(items)) return null;
-  else items === "healthLabels";
-  console.log(items);
 
   return (
     <>
