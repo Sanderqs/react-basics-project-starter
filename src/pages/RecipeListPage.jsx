@@ -11,13 +11,28 @@ import {
 import { data } from "../utils/data";
 import { LabelContent } from "../components/LabelContent";
 import { isVeganCheck } from "../utils/isVeganCheck";
+import { SearchField } from "../components/SearchField";
+import { DropDown } from "../components/DropDown";
+import { getAllLabels } from "../utils/getAllLabels";
+import { useState } from "react";
+import { TestSelect } from "../components/TestSelect";
 
 export const RecipeListPage = () => {
   const recipes = data.hits;
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const allLabels = getAllLabels(recipes);
+  console.log(allLabels);
+
   return (
     <Center flexDir="column">
       <Heading>Your Recipe App</Heading>
+      <SearchField />
+
+      {recipes.length > 0 && (
+        <DropDown options={allLabels} onFilter={setSelectedCategory} />
+      )}
       <SimpleGrid columns={2} gap={1}>
         {recipes.map(({ recipe }) => {
           const {
