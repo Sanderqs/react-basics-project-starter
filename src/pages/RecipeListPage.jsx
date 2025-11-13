@@ -1,93 +1,91 @@
 import {
-  Wrap,
-  WrapItem,
-  Box,
   Center,
   Heading,
-  Image,
   SimpleGrid,
   Text,
+  Input,
+  Image,
 } from "@chakra-ui/react";
+import { useState, useMemo } from "react";
 import { data } from "../utils/data";
-import { LabelContent } from "../components/LabelContent";
-import { isVeganCheck } from "../utils/isVeganCheck";
-import { SearchField } from "../components/SearchField";
 import { DropDown } from "../components/DropDown";
 import { getAllLabels } from "../utils/getAllLabels";
-import { useState } from "react";
-import { TestSelect } from "../components/TestSelect";
+import { SmallRecipeCard } from "../components/SmallRecipeCard";
+import { Dialog } from "../components/Dialog";
 
 export const RecipeListPage = () => {
-  const recipes = data.hits;
+  const recipes = data?.hits || [];
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedLabel, setSelectedLabel] = useState(""); // for dropdown filter
+  const [selectedRecipe, setSelectedRecipe] = useState(null); // for modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const allLabels = getAllLabels(recipes);
-  console.log(allLabels);
+
+  // Filter recipes by search term + selected health label
+  const filteredRecipes = useMemo(() => {
+    return recipes.filter(({ recipe }) => {
+      const matchesSearch = recipe.label
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+      const matchesLabel =
+        !selectedLabel || recipe.healthLabels?.includes(selectedLabel);
+
+      return matchesSearch && matchesLabel;
+    });
+  }, [recipes, searchTerm, selectedLabel]);
+
+  const handleCardClick = (recipe) => {
+    console.log("Clicked recipe:", recipe); // should now log correctly
+    setSelectedRecipe(recipe);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedRecipe(null);
+    setIsModalOpen(false);
+  };
 
   return (
-    <Center flexDir="column">
-      <Heading>Your Recipe App</Heading>
-      <SearchField />
-
+    <Center flexDir="column" py={8} gap={4} w="100%">
+      <Heading mb={4}>Your Recipe App</Heading>
+      <Input
+        placeholder="Search recipes..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        w={["90%", "60%", "40%"]}
+        bg="gray.200"
+        color="black"
+        mb={2}
+      />
       {recipes.length > 0 && (
-        <DropDown options={allLabels} onFilter={setSelectedCategory} />
+        <DropDown options={allLabels} onFilter={setSelectedLabel} />
       )}
-      <SimpleGrid columns={2} gap={1}>
-        {recipes.map(({ recipe }) => {
-          const {
-            label,
-            image,
-            dietLabels,
-            cautions,
-            mealType,
-            dishType,
-            healthLabels,
-          } = recipe;
-          const isVegan = isVeganCheck(healthLabels, ["Vegetarian", "Vegan"]);
-          return (
-            <Box
-              key={label}
-              bg="white"
-              rounded="2xl"
-              shadow="md"
-              overflow="hidden"
-              _hover={{ shadow: "lg" }}
-              transition="all 0.3s"
-              p={3}
-            >
-              <Image src={image} alt={label} width="100%" height="200px" />
-              <Text color="red">{mealType}</Text>
-              <Text color="red">{label}</Text>
-              <Text color="red">Dish: {dishType}</Text>
-
-              <LabelContent title="Diet" items={dietLabels} color="green" />
-
-              {isVegan.length > 0 && (
-                <Wrap justify="center" spacing={2} mt={2}>
-                  {isVegan.map((vLabel) => (
-                    <WrapItem key={vLabel}>
-                      <Box
-                        as="span"
-                        px="2"
-                        py="1"
-                        rounded="full"
-                        bg="green.100"
-                        color="green.800"
-                        fontSize="sm"
-                        fontWeight="semibold"
-                      >
-                        {vLabel}
-                      </Box>
-                    </WrapItem>
-                  ))}
-                </Wrap>
-              )}
-              <LabelContent title="Cautions" items={cautions} color="red" />
-            </Box>
-          );
-        })}
+      <Dialog
+        recipe={selectedRecipe}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
+      {/* // Recipe */}
+      <SimpleGrid columns={[1, 2, 3]} gap={6} mt={4} w="100%">
+        {filteredRecipes.map(({ recipe }) => (
+          <SmallRecipeCard
+            key={recipe.label}
+            recipe={recipe}
+            onClick={() => {
+              setSelectedRecipe(recipe);
+              setIsModalOpen(true);
+            }}
+          />
+        ))}
       </SimpleGrid>
+      {filteredRecipes.length === 0 && (
+        <Text color="gray.500" mt={4}>
+          No recipes found.
+        </Text>
+      )}
     </Center>
   );
 };
