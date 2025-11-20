@@ -5,9 +5,17 @@ import { isVeganCheck } from "../utils/isVeganCheck";
 export const SmallRecipeCard = ({ recipe, onClick }) => {
   if (!recipe) return null;
 
-  const { label, image, dietLabels = [], healthLabels = [], mealType } = recipe;
+  const {
+    label = "No title",
+    image = "",
+    mealType = [],
+    dishType = [],
+    dietLabels = [],
+    cautions = [],
+    healthLabels = [],
+  } = recipe;
 
-  const veganLabels = isVeganCheck(healthLabels, ["Vegetarian", "Vegan"]);
+  const veganLabels = isVeganCheck(healthLabels, ["Vegan", "Vegetarian"]);
 
   return (
     <Box
@@ -15,33 +23,32 @@ export const SmallRecipeCard = ({ recipe, onClick }) => {
       rounded="2xl"
       shadow="md"
       overflow="hidden"
-      _hover={{ shadow: "lg", cursor: "pointer" }}
-      transition="all 0.3s"
       p={3}
-      onClick={() => onClick && onClick(recipe)}
+      cursor="pointer"
+      _hover={{ shadow: "lg", transform: "scale(1.02)" }}
+      transition="all 0.2s"
+      onClick={() => onClick(recipe)}
     >
-      <Image
-        src={image}
-        alt={label}
-        width="100%"
-        height="150px"
-        objectFit="cover"
-      />
-      <Text fontWeight="bold" mt={2} noOfLines={1}>
+      {image && (
+        <Image
+          src={image}
+          alt={label}
+          width="100%"
+          height="150px"
+          objectFit="cover"
+        />
+      )}
+      <Text fontWeight="bold" mt={2}>
         {label}
       </Text>
-      {mealType && (
-        <Text color="gray.600" fontSize="sm">
-          {mealType}
-        </Text>
-      )}
+      <Text fontSize="sm" color="gray.600">
+        {mealType.join(", ") || "N/A"} | {dishType.join(", ") || "N/A"}
+      </Text>
 
-      {/* Diet Labels */}
       <LabelContent title="Diet" items={dietLabels} color="green" />
 
-      {/* Vegan / Vegetarian pills */}
       {veganLabels.length > 0 && (
-        <Wrap justify="center" spacing={2} mt={1}>
+        <Wrap justify="center" spacing={2} mt={2}>
           {veganLabels.map((vLabel) => (
             <WrapItem key={vLabel}>
               <Box
@@ -51,7 +58,7 @@ export const SmallRecipeCard = ({ recipe, onClick }) => {
                 rounded="full"
                 bg="green.100"
                 color="green.800"
-                fontSize="xs"
+                fontSize="sm"
                 fontWeight="semibold"
               >
                 {vLabel}
@@ -60,6 +67,8 @@ export const SmallRecipeCard = ({ recipe, onClick }) => {
           ))}
         </Wrap>
       )}
+
+      <LabelContent title="Cautions" items={cautions} color="red" />
     </Box>
   );
 };

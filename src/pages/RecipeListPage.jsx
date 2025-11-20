@@ -1,44 +1,33 @@
-import {
-  Center,
-  Heading,
-  SimpleGrid,
-  Text,
-  Input,
-  Image,
-} from "@chakra-ui/react";
 import { useState, useMemo } from "react";
+import { Center, Heading, Text, SimpleGrid, Input } from "@chakra-ui/react";
 import { data } from "../utils/data";
 import { DropDown } from "../components/DropDown";
 import { getAllLabels } from "../utils/getAllLabels";
 import { SmallRecipeCard } from "../components/SmallRecipeCard";
-import { Dialog } from "../components/Dialog";
+import { RecipeModal } from "../components/RecipeModal";
 
 export const RecipeListPage = () => {
   const recipes = data?.hits || [];
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedLabel, setSelectedLabel] = useState(""); // for dropdown filter
-  const [selectedRecipe, setSelectedRecipe] = useState(null); // for modal
+  const [selectedLabel, setSelectedLabel] = useState(""); // dropdown
+  const [selectedRecipe, setSelectedRecipe] = useState(null); // modal
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const allLabels = getAllLabels(recipes);
 
-  // Filter recipes by search term + selected health label
   const filteredRecipes = useMemo(() => {
     return recipes.filter(({ recipe }) => {
       const matchesSearch = recipe.label
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
-
       const matchesLabel =
         !selectedLabel || recipe.healthLabels?.includes(selectedLabel);
-
       return matchesSearch && matchesLabel;
     });
   }, [recipes, searchTerm, selectedLabel]);
 
   const handleCardClick = (recipe) => {
-    console.log("Clicked recipe:", recipe); // should now log correctly
     setSelectedRecipe(recipe);
     setIsModalOpen(true);
   };
@@ -51,6 +40,7 @@ export const RecipeListPage = () => {
   return (
     <Center flexDir="column" py={8} gap={4} w="100%">
       <Heading mb={4}>Your Recipe App</Heading>
+
       <Input
         placeholder="Search recipes..."
         value={searchTerm}
@@ -60,27 +50,27 @@ export const RecipeListPage = () => {
         color="black"
         mb={2}
       />
+
       {recipes.length > 0 && (
         <DropDown options={allLabels} onFilter={setSelectedLabel} />
       )}
-      <Dialog
-        recipe={selectedRecipe}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
-      {/* // Recipe */}
+
       <SimpleGrid columns={[1, 2, 3]} gap={6} mt={4} w="100%">
         {filteredRecipes.map(({ recipe }) => (
           <SmallRecipeCard
             key={recipe.label}
             recipe={recipe}
-            onClick={() => {
-              setSelectedRecipe(recipe);
-              setIsModalOpen(true);
-            }}
+            onClick={handleCardClick}
           />
         ))}
       </SimpleGrid>
+
+      <RecipeModal
+        recipe={selectedRecipe}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
+
       {filteredRecipes.length === 0 && (
         <Text color="gray.500" mt={4}>
           No recipes found.

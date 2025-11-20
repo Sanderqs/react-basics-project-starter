@@ -8,7 +8,6 @@ export const SearchField = ({ onSearch }) => {
     const newValue = e.target.value;
     setValue(e.target.value);
     onSearch(newValue);
-    
   };
   return (
     <>
