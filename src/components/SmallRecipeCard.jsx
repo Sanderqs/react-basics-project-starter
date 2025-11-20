@@ -1,4 +1,11 @@
-import { Box, Image, Text, Wrap, WrapItem } from "@chakra-ui/react";
+import {
+  Box,
+  Image,
+  Text,
+  Wrap,
+  WrapItem,
+  AspectRatio,
+} from "@chakra-ui/react";
 import { LabelContent } from "./LabelContent";
 import { isVeganCheck } from "../utils/isVeganCheck";
 
@@ -13,6 +20,8 @@ export const SmallRecipeCard = ({ recipe, onClick }) => {
     dietLabels = [],
     cautions = [],
     healthLabels = [],
+    ingredients = [],
+    nutrition = [],
   } = recipe;
 
   const veganLabels = isVeganCheck(healthLabels, ["Vegan", "Vegetarian"]);
@@ -28,25 +37,33 @@ export const SmallRecipeCard = ({ recipe, onClick }) => {
       _hover={{ shadow: "lg", transform: "scale(1.02)" }}
       transition="all 0.2s"
       onClick={() => onClick(recipe)}
+      display="flex"
+      flexDirection="column"
+      h="100%" // important: fill the grid cell height
+      minH="400px" // optional: ensures a minimum height
     >
+      {/* Image */}
       {image && (
-        <Image
-          src={image}
-          alt={label}
-          width="100%"
-          height="150px"
-          objectFit="cover"
-        />
+        <AspectRatio ratio={4 / 3} w="100%" mb={3}>
+          <Image src={image} alt={label} objectFit="cover" borderRadius="md" />
+        </AspectRatio>
       )}
-      <Text fontWeight="bold" mt={2}>
+
+      {/* Title */}
+      <Text fontWeight="bold" mt={1} fontSize={["md", "lg"]}>
         {label}
       </Text>
-      <Text fontSize="sm" color="gray.600">
+
+      <Text fontSize="sm" color="gray.600" mb={2}>
         {mealType.join(", ") || "N/A"} | {dishType.join(", ") || "N/A"}
       </Text>
 
-      <LabelContent title="Diet" items={dietLabels} color="green" />
+      {/* Diet */}
+      {dietLabels.length > 0 && (
+        <LabelContent title="Diet" items={dietLabels} color="green" mt={2} />
+      )}
 
+      {/* Vegan / Vegetarian */}
       {veganLabels.length > 0 && (
         <Wrap justify="center" spacing={2} mt={2}>
           {veganLabels.map((vLabel) => (
@@ -68,7 +85,26 @@ export const SmallRecipeCard = ({ recipe, onClick }) => {
         </Wrap>
       )}
 
-      <LabelContent title="Cautions" items={cautions} color="red" />
+      {/* Ingredients */}
+      {ingredients.length > 0 && (
+        <Box mt={3}>
+          <LabelContent title="Ingredients" items={ingredients} color="blue" />
+        </Box>
+      )}
+
+      {/* Nutrition */}
+      {nutrition.length > 0 && (
+        <Box mt={3}>
+          <LabelContent title="Nutrition" items={nutrition} color="orange" />
+        </Box>
+      )}
+
+      {/* Cautions pushed to bottom */}
+      {cautions.length > 0 && (
+        <Box mt="auto">
+          <LabelContent title="Cautions" items={cautions} color="red" />
+        </Box>
+      )}
     </Box>
   );
 };
