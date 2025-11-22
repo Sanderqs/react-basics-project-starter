@@ -8,7 +8,6 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { isVeganCheck } from "../utils/isVeganCheck";
-import { LabelContent } from "./LabelContent";
 
 export const Dialog = ({ recipe, isOpen, onClose }) => {
   if (!isOpen || !recipe) return null;
@@ -50,7 +49,7 @@ export const Dialog = ({ recipe, isOpen, onClose }) => {
         left="50%"
         transform="translate(-50%, -50%)"
         bg="gray.50"
-        p={6}
+        p={{ base: 4, md: 6 }}
         rounded="3xl"
         shadow="2xl"
         zIndex={1001}
@@ -99,7 +98,7 @@ export const Dialog = ({ recipe, isOpen, onClose }) => {
         </Flex>
 
         {/* Badges: Diet / Health / Cautions */}
-        <Wrap spacing={2} mb={4}>
+        <Wrap spacing={2} mb={6}>
           {dietLabels.map((d) => (
             <WrapItem key={d}>
               <Box
@@ -145,10 +144,10 @@ export const Dialog = ({ recipe, isOpen, onClose }) => {
         </Wrap>
 
         {/* Ingredients + Nutrients */}
-        <SimpleGrid columns={[1, 2]} spacing={6} mb={4}>
+        <SimpleGrid columns={[1, 2]} spacing={6} mb={6}>
           {/* Ingredients */}
-          <Box bg="orange.50" p={3} rounded="xl">
-            <Text fontWeight="bold" fontSize="lg" mb={2} color="orange.600">
+          <Box bg="orange.50" p={5} rounded="xl" minH="200px">
+            <Text fontWeight="bold" fontSize="lg" mb={3} color="orange.600">
               Ingredients
             </Text>
             <Box as="ul" pl={4}>
@@ -161,26 +160,24 @@ export const Dialog = ({ recipe, isOpen, onClose }) => {
           </Box>
 
           {/* Nutrients */}
-          <Box bg="green.50" p={3} rounded="xl">
-            <Box bg="green.50" p={3} rounded="xl">
-              <Text fontWeight="bold" fontSize="lg" mb={2} color="green.600">
-                Nutrients
-              </Text>
-              <Box>
-                {[
-                  { key: "ENERC_KCAL", label: "Energy", unit: "kcal" },
-                  { key: "PROCNT", label: "Protein", unit: "g" },
-                  { key: "FAT", label: "Fat", unit: "g" },
-                  { key: "CHOCDF", label: "Carbs", unit: "g" },
-                  { key: "CHOLE", label: "Cholesterol", unit: "mg" },
-                  { key: "NA", label: "Sodium", unit: "mg" },
-                ].map(({ key, label, unit }) => (
-                  <Text key={key} color="green.700">
-                    {label}:{" "}
-                    {totalNutrients[key]?.quantity?.toFixed(1) || "N/A"} {unit}
-                  </Text>
-                ))}
-              </Box>
+          <Box bg="green.50" p={5} rounded="xl" minH="200px">
+            <Text fontWeight="bold" fontSize="lg" mb={3} color="green.600">
+              Nutrients
+            </Text>
+            <Box>
+              {[
+                { key: "ENERC_KCAL", label: "Energy", unit: "kcal" },
+                { key: "PROCNT", label: "Protein", unit: "g" },
+                { key: "FAT", label: "Fat", unit: "g" },
+                { key: "CHOCDF", label: "Carbs", unit: "g" },
+                { key: "CHOLE", label: "Cholesterol", unit: "mg" },
+                { key: "NA", label: "Sodium", unit: "mg" },
+              ].map(({ key, label, unit }) => (
+                <Text key={key} color="green.700" mb={1}>
+                  {label}: {totalNutrients[key]?.quantity?.toFixed(1) || "N/A"}{" "}
+                  {unit}
+                </Text>
+              ))}
             </Box>
           </Box>
         </SimpleGrid>

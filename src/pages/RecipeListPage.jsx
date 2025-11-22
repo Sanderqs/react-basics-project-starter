@@ -1,17 +1,24 @@
+import {
+  Center,
+  Heading,
+  SimpleGrid,
+  Text,
+  Input,
+  Box,
+} from "@chakra-ui/react";
 import { useState, useMemo } from "react";
-import { Center, Heading, Text, SimpleGrid, Input } from "@chakra-ui/react";
 import { data } from "../utils/data";
 import { DropDown } from "../components/DropDown";
 import { getAllLabels } from "../utils/getAllLabels";
 import { SmallRecipeCard } from "../components/SmallRecipeCard";
-import { RecipeModal } from "../components/RecipeModal";
+import { Dialog } from "../components/Dialog";
 
 export const RecipeListPage = () => {
   const recipes = data?.hits || [];
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedLabel, setSelectedLabel] = useState(""); // dropdown
-  const [selectedRecipe, setSelectedRecipe] = useState(null); // modal
+  const [selectedLabel, setSelectedLabel] = useState("");
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const allLabels = getAllLabels(recipes);
@@ -21,13 +28,15 @@ export const RecipeListPage = () => {
       const matchesSearch = recipe.label
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
+
       const matchesLabel =
         !selectedLabel || recipe.healthLabels?.includes(selectedLabel);
+
       return matchesSearch && matchesLabel;
     });
   }, [recipes, searchTerm, selectedLabel]);
 
-  const handleCardClick = (recipe) => {
+  const handleOpenModal = (recipe) => {
     setSelectedRecipe(recipe);
     setIsModalOpen(true);
   };
@@ -38,41 +47,60 @@ export const RecipeListPage = () => {
   };
 
   return (
-    <Center flexDir="column" py={8} gap={4} w="100%">
-      <Heading mb={4}>Your Recipe App</Heading>
+    <Center flexDir="column" py={8} w="100%" px={{ base: 2, md: 6 }}>
+      <Heading mb={4} textAlign="center" fontSize={{ base: "2xl", md: "3xl" }}>
+        Your Recipe App
+      </Heading>
 
+      {/* Search Input */}
       <Input
         placeholder="Search recipes..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        w={["90%", "60%", "40%"]}
-        bg="gray.200"
+        w={{ base: "90%", sm: "70%", md: "50%" }}
+        bg="gray.100"
         color="black"
-        mb={2}
+        mb={3}
       />
 
+      {/* Dropdown */}
       {recipes.length > 0 && (
-        <DropDown options={allLabels} onFilter={setSelectedLabel} />
+        <Box w={{ base: "90%", sm: "70%", md: "50%" }} mb={4}>
+          <DropDown options={allLabels} onFilter={setSelectedLabel} />
+        </Box>
       )}
 
-      <SimpleGrid columns={[1, 2, 3]} gap={6} mt={4} w="100%">
-        {filteredRecipes.map(({ recipe }) => (
-          <SmallRecipeCard
-            key={recipe.label}
-            recipe={recipe}
-            onClick={handleCardClick}
-          />
-        ))}
-      </SimpleGrid>
-
-      <RecipeModal
+      {/* Modal */}
+      <Dialog
         recipe={selectedRecipe}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />
 
+      {/* Recipe Grid */}
+      <SimpleGrid
+        columns={{ base: 1, sm: 2, md: 3 }}
+        spacing={{ base: 6, md: 8 }}
+        mt={4}
+        w="100%"
+        maxW="1200px"
+        alignItems="stretch" // important: makes all grid items same height
+      >
+        {filteredRecipes.map(({ recipe }) => (
+          <Box key={recipe.label}>
+            {" "}
+            {/* wrapper for spacing if needed */}
+            <SmallRecipeCard
+              recipe={recipe}
+              onClick={() => handleOpenModal(recipe)}
+            />
+          </Box>
+        ))}
+      </SimpleGrid>
+
+      {/* No results */}
       {filteredRecipes.length === 0 && (
-        <Text color="gray.500" mt={4}>
+        <Text color="gray.500" mt={4} fontSize={{ base: "md", md: "lg" }}>
           No recipes found.
         </Text>
       )}

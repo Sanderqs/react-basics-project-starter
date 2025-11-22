@@ -175,3 +175,4 @@ const filteredRecipes = useMemo(() => {
     </Center>
   );
 };
+dialog aanpassen
