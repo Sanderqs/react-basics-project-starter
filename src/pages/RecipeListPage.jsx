@@ -59,7 +59,6 @@ export const RecipeListPage = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         w={{ base: "90%", sm: "70%", md: "50%" }}
         bg="gray.100"
-        color="black"
         mb={3}
       />
 
@@ -84,12 +83,13 @@ export const RecipeListPage = () => {
         mt={4}
         w="100%"
         maxW="1200px"
-        alignItems="stretch" // important: makes all grid items same height
+        alignItems="stretch"
+        gap={"4px"}
+        _dark={"black"}
+        bg={{ base: "white", _dark: "black" }}
       >
         {filteredRecipes.map(({ recipe }) => (
           <Box key={recipe.label}>
-            {" "}
-            {/* wrapper for spacing if needed */}
             <SmallRecipeCard
               recipe={recipe}
               onClick={() => handleOpenModal(recipe)}

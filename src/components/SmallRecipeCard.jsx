@@ -28,7 +28,7 @@ export const SmallRecipeCard = ({ recipe, onClick }) => {
 
   return (
     <Box
-      bg="white"
+      bg={{ base: "blue.100", _dark: "teal.300" }}
       rounded="2xl"
       shadow="md"
       overflow="hidden"
@@ -39,8 +39,8 @@ export const SmallRecipeCard = ({ recipe, onClick }) => {
       onClick={() => onClick(recipe)}
       display="flex"
       flexDirection="column"
-      h="100%" // important: fill the grid cell height
-      minH="400px" // optional: ensures a minimum height
+      h="100%"
+      minH="400px"
     >
       {/* Image */}
       {image && (
@@ -66,8 +66,8 @@ export const SmallRecipeCard = ({ recipe, onClick }) => {
       {/* Vegan / Vegetarian */}
       {veganLabels.length > 0 && (
         <Wrap justify="center" spacing={2} mt={2}>
-          {veganLabels.map((vLabel) => (
-            <WrapItem key={vLabel}>
+          {veganLabels.map((veganlabel) => (
+            <WrapItem key={veganlabel}>
               <Box
                 as="span"
                 px="2"
@@ -78,7 +78,7 @@ export const SmallRecipeCard = ({ recipe, onClick }) => {
                 fontSize="sm"
                 fontWeight="semibold"
               >
-                {vLabel}
+                {veganlabel}
               </Box>
             </WrapItem>
           ))}
@@ -99,7 +99,7 @@ export const SmallRecipeCard = ({ recipe, onClick }) => {
         </Box>
       )}
 
-      {/* Cautions pushed to bottom */}
+      {/* Cautions */}
       {cautions.length > 0 && (
         <Box mt="auto">
           <LabelContent title="Cautions" items={cautions} color="red" />
