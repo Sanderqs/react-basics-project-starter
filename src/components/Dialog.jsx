@@ -37,7 +37,7 @@ export const Dialog = ({ recipe, isOpen, onClose }) => {
         left={0}
         w="100vw"
         h="100vh"
-        bg="blackAlpha.600"
+        bg={{ base: "blackAlpha.600", _dark: "white.600" }}
         zIndex={1000}
         onClick={onClose}
       />
@@ -99,8 +99,8 @@ export const Dialog = ({ recipe, isOpen, onClose }) => {
 
         {/* Badges: Diet / Health / Cautions */}
         <Wrap spacing={2} mb={6}>
-          {dietLabels.map((d) => (
-            <WrapItem key={d}>
+          {dietLabels.map((dietlabel) => (
+            <WrapItem key={dietlabel}>
               <Box
                 px={2}
                 py={1}
@@ -109,12 +109,12 @@ export const Dialog = ({ recipe, isOpen, onClose }) => {
                 color="green.900"
                 fontSize="sm"
               >
-                {d}
+                {dietlabel}
               </Box>
             </WrapItem>
           ))}
-          {veganLabels.map((v) => (
-            <WrapItem key={v}>
+          {veganLabels.map((veganlabel) => (
+            <WrapItem key={veganlabel}>
               <Box
                 px={2}
                 py={1}
@@ -123,12 +123,12 @@ export const Dialog = ({ recipe, isOpen, onClose }) => {
                 color="teal.900"
                 fontSize="sm"
               >
-                {v}
+                {veganlabel}
               </Box>
             </WrapItem>
           ))}
-          {cautions.map((c) => (
-            <WrapItem key={c}>
+          {cautions.map((caution) => (
+            <WrapItem key={caution}>
               <Box
                 px={2}
                 py={1}
@@ -137,7 +137,7 @@ export const Dialog = ({ recipe, isOpen, onClose }) => {
                 color="red.800"
                 fontSize="sm"
               >
-                {c}
+                {caution}
               </Box>
             </WrapItem>
           ))}
